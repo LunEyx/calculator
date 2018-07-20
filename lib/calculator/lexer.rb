@@ -5,8 +5,8 @@ require 'strscan'
 module Calculator
   class Lexer
     SAMPLE = {
-      float: /\d*\.\d+/,
-      int:   /\d+/,
+      float: /(\d+(_?\d+)*)?\.\d+(_?\d+)*/,
+      int:   /\d+(_?\d+)*/,
       op:    %r{[+\-*/%]},
       sp:    /\s+/,
       id:    /[a-z][a-zA-Z0-9]*/,

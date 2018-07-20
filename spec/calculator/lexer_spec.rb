@@ -5,529 +5,573 @@ require 'rspec'
 require_relative '../../lib/calculator/lexer'
 
 RSpec.describe Calculator::Lexer do
-  subject(:lexer) { described_class.new }
+  subject { described_class.new.lex(str) }
 
   describe '#lex' do
     context 'with int' do
-      it 'returns :int and "15"' do
-        expect(lexer.lex('15')).to eq [[:int, '15']]
-      end
+      let(:str) { '15' }
+
+      it { is_expected.to eq [[:int, '15']] }
     end
 
-    context 'with float' do
-      it 'returns :float and "12.54"' do
-        expect(lexer.lex('12.54')).to eq [[:float, '12.54']]
-      end
+    context 'with int included _' do
+      let(:str) { '1_000' }
+
+      it { is_expected.to eq [[:int, '1_000']] }
     end
 
-    context 'with operator supported' do
-      it 'returns :op and +' do
-        expect(lexer.lex('+')).to eq [[:op, '+']]
-      end
+    context 'with float start with digit' do
+      let(:str) { '12.54' }
+
+      it { is_expected.to eq [[:float, '12.54']] }
+    end
+
+    context 'with float start with .' do
+      let(:str) { '.75' }
+
+      it { is_expected.to eq [[:float, '.75']] }
+    end
+
+    context 'with float start with digit include _' do
+      let(:str) { '123_324.544_232_234' }
+
+      it { is_expected.to eq [[:float, '123_324.544_232_234']] }
+    end
+
+    context 'with float start with . include _' do
+      let(:str) { '.752_234_234' }
+
+      it { is_expected.to eq [[:float, '.752_234_234']] }
+    end
+
+    context 'with operator "+"' do
+      let(:str) { '+' }
+
+      it { is_expected.to eq [[:op, '+']] }
     end
 
     context 'with operator "-"' do
-      it 'returns :op and -' do
-        expect(lexer.lex('-')).to eq [[:op, '-']]
-      end
+      let(:str) { '-' }
+
+      it { is_expected.to eq [[:op, '-']] }
     end
 
     context 'with operator "*"' do
-      it 'returns :op and *' do
-        expect(lexer.lex('*')).to eq [[:op, '*']]
-      end
+      let(:str) { '*' }
+
+      it { is_expected.to eq [[:op, '*']] }
     end
 
     context 'with operator "/"' do
-      it 'returns :op and /' do
-        expect(lexer.lex('/')).to eq [[:op, '/']]
-      end
+      let(:str) { '/' }
+
+      it { is_expected.to eq [[:op, '/']] }
     end
 
     context 'with operator "%"' do
-      it 'returns :op and %' do
-        expect(lexer.lex('%')).to eq [[:op, '%']]
-      end
+      let(:str) { '%' }
+
+      it { is_expected.to eq [[:op, '%']] }
     end
 
     context 'with space' do
-      it 'returns :sp and "sp"' do
-        expect(lexer.lex(' ')).to eq [[:sp, ' ']]
-      end
+      let(:str) { ' ' }
+
+      it { is_expected.to eq [[:sp, ' ']] }
     end
 
+    context 'with equation 1' do
+      let(:str) { '1 + 1' }
+
+      it { is_expected.to eq [[:int, '1'], [:sp, ' '], [:op, '+'], [:sp, ' '], [:int, '1']] }
+    end
+
+    context 'with equation 1' do
+      let(:str) { '30_000_000*.25' }
+
+      it { is_expected.to eq [[:int, '30_000_000'], [:op, '*'], [:float, '.25']] }
+    end
+
+    context 'with equation 1' do
+      let(:str) { '1 + 1' }
+
+      it { is_expected.to eq [[:int, '1'], [:sp, ' '], [:op, '+'], [:sp, ' '], [:int, '1']] }
+    end
+
+    # Below is not supported
+
     context 'with lowercase character a' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('a')).to eq [[:id, 'a']]
-      end
+      let(:str) { 'a' }
+
+      it { is_expected.to eq [[:id, 'a']] }
     end
 
     context 'with lowercase character b' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('b')).to eq [[:id, 'b']]
-      end
+      let(:str) { 'b' }
+
+      it { is_expected.to eq [[:id, 'b']] }
     end
 
     context 'with lowercase character c' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('c')).to eq [[:id, 'c']]
-      end
+      let(:str) { 'c' }
+
+      it { is_expected.to eq [[:id, 'c']] }
     end
 
     context 'with lowercase character d' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('d')).to eq [[:id, 'd']]
-      end
+      let(:str) { 'd' }
+
+      it { is_expected.to eq [[:id, 'd']] }
     end
 
     context 'with lowercase character e' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('e')).to eq [[:id, 'e']]
-      end
+      let(:str) { 'e' }
+
+      it { is_expected.to eq [[:id, 'e']] }
     end
 
     context 'with lowercase character f' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('f')).to eq [[:id, 'f']]
-      end
+      let(:str) { 'f' }
+
+      it { is_expected.to eq [[:id, 'f']] }
     end
 
     context 'with lowercase character g' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('g')).to eq [[:id, 'g']]
-      end
+      let(:str) { 'g' }
+
+      it { is_expected.to eq [[:id, 'g']] }
     end
 
     context 'with lowercase character h' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('h')).to eq [[:id, 'h']]
-      end
+      let(:str) { 'h' }
+
+      it { is_expected.to eq [[:id, 'h']] }
     end
 
     context 'with lowercase character i' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('i')).to eq [[:id, 'i']]
-      end
+      let(:str) { 'i' }
+
+      it { is_expected.to eq [[:id, 'i']] }
     end
 
     context 'with lowercase character j' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('j')).to eq [[:id, 'j']]
-      end
+      let(:str) { 'j' }
+
+      it { is_expected.to eq [[:id, 'j']] }
     end
 
     context 'with lowercase character k' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('k')).to eq [[:id, 'k']]
-      end
+      let(:str) { 'k' }
+
+      it { is_expected.to eq [[:id, 'k']] }
     end
 
     context 'with lowercase character l' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('l')).to eq [[:id, 'l']]
-      end
+      let(:str) { 'l' }
+
+      it { is_expected.to eq [[:id, 'l']] }
     end
 
     context 'with lowercase character m' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('m')).to eq [[:id, 'm']]
-      end
+      let(:str) { 'm' }
+
+      it { is_expected.to eq [[:id, 'm']] }
     end
 
     context 'with lowercase character n' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('n')).to eq [[:id, 'n']]
-      end
+      let(:str) { 'n' }
+
+      it { is_expected.to eq [[:id, 'n']] }
     end
 
     context 'with lowercase character o' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('o')).to eq [[:id, 'o']]
-      end
+      let(:str) { 'o' }
+
+      it { is_expected.to eq [[:id, 'o']] }
     end
 
     context 'with lowercase character p' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('p')).to eq [[:id, 'p']]
-      end
+      let(:str) { 'p' }
+
+      it { is_expected.to eq [[:id, 'p']] }
     end
 
     context 'with lowercase character q' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('q')).to eq [[:id, 'q']]
-      end
+      let(:str) { 'q' }
+
+      it { is_expected.to eq [[:id, 'q']] }
     end
 
     context 'with lowercase character r' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('r')).to eq [[:id, 'r']]
-      end
+      let(:str) { 'r' }
+
+      it { is_expected.to eq [[:id, 'r']] }
     end
 
     context 'with lowercase character s' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('s')).to eq [[:id, 's']]
-      end
+      let(:str) { 's' }
+
+      it { is_expected.to eq [[:id, 's']] }
     end
 
     context 'with lowercase character t' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('t')).to eq [[:id, 't']]
-      end
+      let(:str) { 't' }
+
+      it { is_expected.to eq [[:id, 't']] }
     end
 
     context 'with lowercase character u' do
-      it 'raises syntaxerror' do
-        expect(lexer.lex('u')).to eq [[:id, 'u']]
-      end
+      let(:str) { 'u' }
+
+      it { is_expected.to eq [[:id, 'u']] }
     end
 
     context 'with lowercase character v' do
-      it 'returns :id and "v"' do
-        expect(lexer.lex('v')).to eq [[:id, 'v']]
-      end
+      let(:str) { 'v' }
+
+      it { is_expected.to eq [[:id, 'v']] }
     end
 
     context 'with lowercase character w' do
-      it 'returns :id and "w"' do
-        expect(lexer.lex('w')).to eq [[:id, 'w']]
-      end
+      let(:str) { 'w' }
+
+      it { is_expected.to eq [[:id, 'w']] }
     end
 
     context 'with lowercase character x' do
-      it 'returns :id and "x"' do
-        expect(lexer.lex('x')).to eq [[:id, 'x']]
-      end
+      let(:str) { 'x' }
+
+      it { is_expected.to eq [[:id, 'x']] }
     end
 
     context 'with lowercase character y' do
-      it 'returns :id and "y"' do
-        expect(lexer.lex('y')).to eq [[:id, 'y']]
-      end
+      let(:str) { 'y' }
+
+      it { is_expected.to eq [[:id, 'y']] }
     end
 
     context 'with lowercase character z' do
-      it 'returns :id and "z"' do
-        expect(lexer.lex('z')).to eq [[:id, 'z']]
-      end
+      let(:str) { 'z' }
+
+      it { is_expected.to eq [[:id, 'z']] }
     end
 
     context 'with uppercase character A' do
-      it 'returns :const and "A"' do
-        expect(lexer.lex('A')).to eq [[:const, 'A']]
-      end
+      let(:str) { 'A' }
+
+      it { is_expected.to eq [[:const, 'A']] }
     end
 
     context 'with uppercase character B' do
-      it 'returns :const and "B"' do
-        expect(lexer.lex('B')).to eq [[:const, 'B']]
-      end
+      let(:str) { 'B' }
+
+      it { is_expected.to eq [[:const, 'B']] }
     end
 
     context 'with uppercase character C' do
-      it 'returns :const and "C"' do
-        expect(lexer.lex('C')).to eq [[:const, 'C']]
-      end
+      let(:str) { 'C' }
+
+      it { is_expected.to eq [[:const, 'C']] }
     end
 
     context 'with uppercase character D' do
-      it 'returns :const and "D"' do
-        expect(lexer.lex('D')).to eq [[:const, 'D']]
-      end
+      let(:str) { 'D' }
+
+      it { is_expected.to eq [[:const, 'D']] }
     end
 
     context 'with uppercase character E' do
-      it 'returns :const and "E"' do
-        expect(lexer.lex('E')).to eq [[:const, 'E']]
-      end
+      let(:str) { 'E' }
+
+      it { is_expected.to eq [[:const, 'E']] }
     end
 
     context 'with uppercase character F' do
-      it 'returns :const and "F"' do
-        expect(lexer.lex('F')).to eq [[:const, 'F']]
-      end
+      let(:str) { 'F' }
+
+      it { is_expected.to eq [[:const, 'F']] }
     end
 
     context 'with uppercase character G' do
-      it 'returns :const and "G"' do
-        expect(lexer.lex('G')).to eq [[:const, 'G']]
-      end
+      let(:str) { 'G' }
+
+      it { is_expected.to eq [[:const, 'G']] }
     end
 
     context 'with uppercase character H' do
-      it 'returns :const and "H"' do
-        expect(lexer.lex('H')).to eq [[:const, 'H']]
-      end
+      let(:str) { 'H' }
+
+      it { is_expected.to eq [[:const, 'H']] }
     end
 
     context 'with uppercase character I' do
-      it 'returns :const and "I"' do
-        expect(lexer.lex('I')).to eq [[:const, 'I']]
-      end
+      let(:str) { 'I' }
+
+      it { is_expected.to eq [[:const, 'I']] }
     end
 
     context 'with uppercase character J' do
-      it 'returns :const and "J"' do
-        expect(lexer.lex('J')).to eq [[:const, 'J']]
-      end
+      let(:str) { 'J' }
+
+      it { is_expected.to eq [[:const, 'J']] }
     end
 
     context 'with uppercase character K' do
-      it 'returns :const and "K"' do
-        expect(lexer.lex('K')).to eq [[:const, 'K']]
-      end
+      let(:str) { 'K' }
+
+      it { is_expected.to eq [[:const, 'K']] }
     end
 
     context 'with uppercase character L' do
-      it 'returns :const and "L"' do
-        expect(lexer.lex('L')).to eq [[:const, 'L']]
-      end
+      let(:str) { 'L' }
+
+      it { is_expected.to eq [[:const, 'L']] }
     end
 
     context 'with uppercase character M' do
-      it 'returns :const and "M"' do
-        expect(lexer.lex('M')).to eq [[:const, 'M']]
-      end
+      let(:str) { 'M' }
+
+      it { is_expected.to eq [[:const, 'M']] }
     end
 
     context 'with uppercase character N' do
-      it 'returns :const and "N"' do
-        expect(lexer.lex('N')).to eq [[:const, 'N']]
-      end
+      let(:str) { 'N' }
+
+      it { is_expected.to eq [[:const, 'N']] }
     end
 
     context 'with uppercase character O' do
-      it 'returns :const and "O"' do
-        expect(lexer.lex('O')).to eq [[:const, 'O']]
-      end
+      let(:str) { 'O' }
+
+      it { is_expected.to eq [[:const, 'O']] }
     end
 
     context 'with uppercase character P' do
-      it 'returns :const and "P"' do
-        expect(lexer.lex('P')).to eq [[:const, 'P']]
-      end
+      let(:str) { 'P' }
+
+      it { is_expected.to eq [[:const, 'P']] }
     end
 
     context 'with uppercase character Q' do
-      it 'returns :const and "Q"' do
-        expect(lexer.lex('Q')).to eq [[:const, 'Q']]
-      end
+      let(:str) { 'Q' }
+
+      it { is_expected.to eq [[:const, 'Q']] }
     end
 
     context 'with uppercase character R' do
-      it 'returns :const and "R"' do
-        expect(lexer.lex('R')).to eq [[:const, 'R']]
-      end
+      let(:str) { 'R' }
+
+      it { is_expected.to eq [[:const, 'R']] }
     end
 
     context 'with uppercase character S' do
-      it 'returns :const and "S"' do
-        expect(lexer.lex('S')).to eq [[:const, 'S']]
-      end
+      let(:str) { 'S' }
+
+      it { is_expected.to eq [[:const, 'S']] }
     end
 
     context 'with uppercase character T' do
-      it 'returns :const and "T"' do
-        expect(lexer.lex('T')).to eq [[:const, 'T']]
-      end
+      let(:str) { 'T' }
+
+      it { is_expected.to eq [[:const, 'T']] }
     end
 
     context 'with uppercase character U' do
-      it 'returns :const and "U"' do
-        expect(lexer.lex('U')).to eq [[:const, 'U']]
-      end
+      let(:str) { 'U' }
+
+      it { is_expected.to eq [[:const, 'U']] }
     end
 
     context 'with uppercase character V' do
-      it 'returns :const and "V"' do
-        expect(lexer.lex('V')).to eq [[:const, 'V']]
-      end
+      let(:str) { 'V' }
+
+      it { is_expected.to eq [[:const, 'V']] }
     end
 
     context 'with uppercase character W' do
-      it 'returns :const and "W"' do
-        expect(lexer.lex('W')).to eq [[:const, 'W']]
-      end
+      let(:str) { 'W' }
+
+      it { is_expected.to eq [[:const, 'W']] }
     end
 
     context 'with uppercase character X' do
-      it 'returns :const and "X"' do
-        expect(lexer.lex('X')).to eq [[:const, 'X']]
-      end
+      let(:str) { 'X' }
+
+      it { is_expected.to eq [[:const, 'X']] }
     end
 
     context 'with uppercase character Y' do
-      it 'returns :const and "Y"' do
-        expect(lexer.lex('Y')).to eq [[:const, 'Y']]
-      end
+      let(:str) { 'Y' }
+
+      it { is_expected.to eq [[:const, 'Y']] }
     end
 
     context 'with uppercase character Z' do
-      it 'returns :const and "Z"' do
-        expect(lexer.lex('Z')).to eq [[:const, 'Z']]
-      end
+      let(:str) { 'Z' }
+
+      it { is_expected.to eq [[:const, 'Z']] }
     end
 
     context 'with not supported operator `' do
-      it 'returns :error and "`"' do
-        expect(lexer.lex('`')).to eq [[:error, '`']]
-      end
+      let(:str) { '`' }
+
+      it { is_expected.to eq [[:error, '`']] }
     end
 
     context 'with not supported operator ~' do
-      it 'returns :error and "~"' do
-        expect(lexer.lex('~')).to eq [[:error, '~']]
-      end
+      let(:str) { '~' }
+
+      it { is_expected.to eq [[:error, '~']] }
     end
 
     context 'with not supported operator !' do
-      it 'returns :error and "!"' do
-        expect(lexer.lex('!')).to eq [[:error, '!']]
-      end
+      let(:str) { '!' }
+
+      it { is_expected.to eq [[:error, '!']] }
     end
 
     context 'with not supported operator @' do
-      it 'returns :error and "@"' do
-        expect(lexer.lex('@')).to eq [[:error, '@']]
-      end
+      let(:str) { '@' }
+
+      it { is_expected.to eq [[:error, '@']] }
     end
 
     context 'with not supported operator #' do
-      it 'returns :error and "#"' do
-        expect(lexer.lex('#')).to eq [[:error, '#']]
-      end
+      let(:str) { '#' }
+
+      it { is_expected.to eq [[:error, '#']] }
     end
 
     context 'with not supported operator $' do
-      it 'returns :error and "$"' do
-        expect(lexer.lex('$')).to eq [[:error, '$']]
-      end
+      let(:str) { '$' }
+
+      it { is_expected.to eq [[:error, '$']] }
     end
 
     context 'with not supported operator ^' do
-      it 'returns :error and "^"' do
-        expect(lexer.lex('^')).to eq [[:error, '^']]
-      end
+      let(:str) { '^' }
+
+      it { is_expected.to eq [[:error, '^']] }
     end
 
     context 'with not supported operator &' do
-      it 'returns :error and "&"' do
-        expect(lexer.lex('&')).to eq [[:error, '&']]
-      end
+      let(:str) { '&' }
+
+      it { is_expected.to eq [[:error, '&']] }
     end
 
     context 'with not supported operator (' do
-      it 'returns :error an "("' do
-        expect(lexer.lex('(')).to eq [[:error, '(']]
-      end
+      let(:str) { '(' }
+
+      it { is_expected.to eq [[:error, '(']] }
     end
 
     context 'with not supported operator )' do
-      it 'returns :error an ")"' do
-        expect(lexer.lex(')')).to eq [[:error, ')']]
-      end
+      let(:str) { ')' }
+
+      it { is_expected.to eq [[:error, ')']] }
     end
 
     context 'with not supported operator _' do
-      it 'returns :error and "_"' do
-        expect(lexer.lex('_')).to eq [[:error, '_']]
-      end
+      let(:str) { '_' }
+
+      it { is_expected.to eq [[:error, '_']] }
     end
 
     context 'with not supported operator =' do
-      it 'returns :error and "="' do
-        expect(lexer.lex('=')).to eq [[:error, '=']]
-      end
+      let(:str) { '=' }
+
+      it { is_expected.to eq [[:error, '=']] }
     end
 
     context 'with not supported operator {' do
-      it 'returns :error and "{"' do
-        expect(lexer.lex('{')).to eq [[:error, '{']]
-      end
+      let(:str) { '{' }
+
+      it { is_expected.to eq [[:error, '{']] }
     end
 
     context 'with not supported operator }' do
-      it 'returns :error and "}"' do
-        expect(lexer.lex('}')).to eq [[:error, '}']]
-      end
+      let(:str) { '}' }
+
+      it { is_expected.to eq [[:error, '}']] }
     end
 
     context 'with not supported operator [' do
-      it 'returns :error and "["' do
-        expect(lexer.lex('[')).to eq [[:error, '[']]
-      end
+      let(:str) { '[' }
+
+      it { is_expected.to eq [[:error, '[']] }
     end
 
     context 'with not supported operator ]' do
-      it 'returns :error and "]"' do
-        expect(lexer.lex(']')).to eq [[:error, ']']]
-      end
+      let(:str) { ']' }
+
+      it { is_expected.to eq [[:error, ']']] }
     end
 
     context 'with not supported operator |' do
-      it 'returns :error and "|"' do
-        expect(lexer.lex('|')).to eq [[:error, '|']]
-      end
+      let(:str) { '|' }
+
+      it { is_expected.to eq [[:error, '|']] }
     end
 
     context 'with not supported operator |' do
-      it 'returns :error and "\"' do
-        expect(lexer.lex('\\')).to eq [[:error, '\\']]
-      end
+      let(:str) { '\\' }
+
+      it { is_expected.to eq [[:error, '\\']] }
     end
 
-    context 'with not supported operator  :' do
-      it 'returns :error and ":"' do
-        expect(lexer.lex(':')).to eq [[:error, ':']]
-      end
+    context 'with not supported operator :' do
+      let(:str) { ':' }
+
+      it { is_expected.to eq [[:error, ':']] }
     end
 
     context 'with not supported operator ;' do
-      it 'returns :error and ";"' do
-        expect(lexer.lex(';')).to eq [[:error, ';']]
-      end
+      let(:str) { ';' }
+
+      it { is_expected.to eq [[:error, ';']] }
     end
 
     context 'with not supported operator "' do
-      it 'returns :error and """' do
-        expect(lexer.lex('"')).to eq [[:error, '"']]
-      end
+      let(:str) { '"' }
+
+      it { is_expected.to eq [[:error, '"']] }
     end
 
     context 'with not supported operator \'' do
-      it 'returns :error and "\"' do
-        expect(lexer.lex('\'')).to eq [[:error, '\'']]
-      end
+      let(:str) { '\'' }
+
+      it { is_expected.to eq [[:error, '\'']] }
     end
 
     context 'with not supported operator <' do
-      it 'returns :error and "<"' do
-        expect(lexer.lex('<')).to eq [[:error, '<']]
-      end
+      let(:str) { '<' }
+
+      it { is_expected.to eq [[:error, '<']] }
     end
 
     context 'with not supported operator ,' do
-      it 'returns :error and ","' do
-        expect(lexer.lex(',')).to eq [[:error, ',']]
-      end
+      let(:str) { ',' }
+
+      it { is_expected.to eq [[:error, ',']] }
     end
 
     context 'with not supported operator >' do
-      it 'returns :error and ">"' do
-        expect(lexer.lex('>')).to eq [[:error, '>']]
-      end
+      let(:str) { '>' }
+
+      it { is_expected.to eq [[:error, '>']] }
     end
 
     context 'with not supported operator .' do
-      it 'returns :error and "."' do
-        expect(lexer.lex('.')).to eq [[:error, '.']]
-      end
+      let(:str) { '.' }
+
+      it { is_expected.to eq [[:error, '.']] }
     end
 
     context 'with not supported operator ?' do
-      it 'returns :error and "?"' do
-        expect(lexer.lex('?')).to eq [[:error, '?']]
-      end
+      let(:str) { '?' }
+
+      it { is_expected.to eq [[:error, '?']] }
     end
   end
 end
