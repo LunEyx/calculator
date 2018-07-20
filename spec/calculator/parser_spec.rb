@@ -64,11 +64,40 @@ RSpec.describe Calculator::Parser do
       it do
         is_expected.to eq(
           [:binary, :+, [:binary, :*, [:unary, :-@, [:int, 3]], [:unary, :-@, [:int, 4]]],
-           [:binary, :%,
-            [:binary, :/, [:int, 5],
-             [:unary, :-@, [:unary, :-@, [:unary, :+@, [:unary, :-@, [:int, 4]]]]]], [:int, 53]]]
+           [:binary, :%, [:binary, :/, [:int, 5],
+                          [:unary, :-@, [:unary, :-@, [:unary, :+@, [:unary, :-@, [:int, 4]]]]]], [:int, 53]]]
         )
       end
+    end
+
+    context 'with two number only' do
+      let(:str) { ' 1 1 ' }
+
+      it { is_expected.to eq nil }
+    end
+
+    context 'with two binary operator together' do
+      let(:str) { ' 1 / /1 ' }
+
+      it { is_expected.to eq nil }
+    end
+
+    context 'with empty string' do
+      let(:str) { '' }
+
+      it { is_expected.to eq [] }
+    end
+
+    context 'with only space or tab' do
+      let(:str) { "   \t   \t  \t" }
+
+      it { is_expected.to eq [] }
+    end
+
+    context 'with random garbage' do
+      let(:str) { '/ ** 4 3 + ...lsdjfka' }
+
+      it { is_expected.to eq nil }
     end
   end
 
@@ -134,6 +163,36 @@ RSpec.describe Calculator::Parser do
                            [:int, 5], [:int, 4], [:unary, :-@], [:unary, :+@], [:unary, :-@],
                            [:unary, :-@], [:binary, :/], [:int, 53], [:binary, :%], [:binary, :+]]
       end
+    end
+
+    context 'with two number only' do
+      let(:str) { ' 1 1 ' }
+
+      it { is_expected.to eq nil }
+    end
+
+    context 'with two binary operator together' do
+      let(:str) { ' 1 / /1 ' }
+
+      it { is_expected.to eq nil }
+    end
+
+    context 'with empty string' do
+      let(:str) { '' }
+
+      it { is_expected.to eq [] }
+    end
+
+    context 'with only space or tab' do
+      let(:str) { "   \t   \t  \t" }
+
+      it { is_expected.to eq [] }
+    end
+
+    context 'with random garbage' do
+      let(:str) { '/ ** 4 3 + ...lsdjfka' }
+
+      it { is_expected.to eq nil }
     end
   end
 end

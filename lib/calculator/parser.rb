@@ -25,7 +25,8 @@ module Calculator
 
     def sexp(str)
       @tokens = @lexer.lex(str)
-      infix_to_postfix
+      return nil if infix_to_postfix.nil?
+      return [] if @tokens.empty?
 
       stack = []
 
@@ -51,6 +52,9 @@ module Calculator
     private
 
     def infix_to_postfix
+      return [] if @tokens.empty?
+      return nil if @tokens[0].nil?
+
       last = nil
       stack = []
       postfix = []
@@ -65,6 +69,7 @@ module Calculator
           postfix << token
         when :op
           postfix_operator_token(token, last)
+          return nil if PRESEDENCE[token[1]].nil?
           stack.reverse_each do |op|
             break if PRESEDENCE[op[1]] < PRESEDENCE[token[1]]
             break if PRESEDENCE[op[1]] == PRESEDENCE[token[1]] && token[0] == :unary
@@ -76,16 +81,30 @@ module Calculator
         last = token[0]
       end
       @tokens = postfix.concat(stack.reverse)
+      @tokens = validate ? @tokens : nil
     end
 
     def postfix_operator_token(token, last)
       if last.nil? || last == :unary || last == :binary
         token[0] = :unary
         token[1] = (token[1].to_s + '@').to_sym
-        raise SyntaxError if PRESEDENCE[token[1]].nil?
       else
         token[0] = :binary
       end
+    end
+
+    def validate
+      counter = 0
+      @tokens.each do |type, _|
+        case type
+        when :int, :float
+          counter += 1
+        when :binary
+          counter -= 1
+        end
+        return false if counter < 1
+      end
+      counter == 1
     end
   end
 end

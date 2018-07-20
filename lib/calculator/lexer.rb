@@ -18,9 +18,9 @@ module Calculator
 
       scanner.scan(/\s+/)
       until (!tokens.empty? && tokens.last.nil?) || scanner.eos?
-        scanner.scan(/\s+/)
         token = scan_token(scanner)
         tokens << token
+        scanner.scan(/\s+/)
       end
 
       return [nil] if !tokens.empty? && tokens.last.nil?

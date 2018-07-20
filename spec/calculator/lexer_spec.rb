@@ -86,6 +86,35 @@ RSpec.describe Calculator::Lexer do
       it { is_expected.to eq [] }
     end
 
+    context 'with two number only' do
+      let(:str) { ' 1 1 ' }
+
+      it { is_expected.to eq [[:int, '1'], [:int, '1']] }
+    end
+
+    context 'with two binary operator together' do
+      let(:str) { ' 1 / /1 ' }
+
+      it { is_expected.to eq [[:int, '1'], [:op, :/], [:op, :/], [:int, '1']] }
+    end
+
+    context 'with only space or tab' do
+      let(:str) { "   \t   \t  \t" }
+
+      it { is_expected.to eq [] }
+    end
+
+    context 'with random garbage' do
+      let(:str) { '/ ** 4 3 + ...lsdjfka' }
+
+      it do
+        is_expected.to eq(
+          [[:op, :/], [:op, :*], [:op, :*], [:int, '4'], [:int, '3'], [:op, :+],
+           [:error, '.'], [:error, '.'], [:error, '.'], [:id, 'lsdjfka']]
+        )
+      end
+    end
+
     context 'with equation 1' do
       let(:str) { '1 + 1' }
 
