@@ -8,7 +8,6 @@ module Calculator
       float: /(\d+(_?\d+)*)?\.\d+(_?\d+)*/,
       int:   /\d+(_?\d+)*/,
       op:    %r{[+\-*/%]},
-      sp:    /\s+/,
       id:    /[a-z][a-zA-Z0-9]*/,
       const: /[A-Z]+/,
       error: /./
@@ -17,18 +16,24 @@ module Calculator
       scanner = StringScanner.new(str)
       tokens = []
 
-      tokens << scan_token(scanner) until scanner.eos?
+      scanner.scan(/\s+/)
+      until (!tokens.empty? && tokens.last.nil?) || scanner.eos?
+        scanner.scan(/\s+/)
+        token = scan_token(scanner)
+        tokens << token
+      end
 
+      return [nil] if !tokens.empty? && tokens.last.nil?
       tokens
     end
 
     def scan_token(scanner)
       SAMPLE.each do |type, regex|
         scan_result = scanner.scan(regex)
-        unless scan_result.nil?
-          return token = [type, scan_result]
-        end
+        type == :op && scan_result = scan_result&.to_sym
+        return [type, scan_result] unless scan_result.nil?
       end
+      nil
     end
   end
 end
