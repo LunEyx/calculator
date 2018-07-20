@@ -8,13 +8,13 @@ RSpec.describe Calculator::Lexer do
   subject { described_class.new.lex(str) }
 
   describe '#lex' do
-    context 'with int' do
+    context 'with integer' do
       let(:str) { '15' }
 
       it { is_expected.to eq [[:int, '15']] }
     end
 
-    context 'with int included _' do
+    context 'with integer included _' do
       let(:str) { '1_000' }
 
       it { is_expected.to eq [[:int, '1_000']] }
@@ -47,55 +47,61 @@ RSpec.describe Calculator::Lexer do
     context 'with operator "+"' do
       let(:str) { '+' }
 
-      it { is_expected.to eq [[:op, '+']] }
+      it { is_expected.to eq [[:op, :+]] }
     end
 
     context 'with operator "-"' do
       let(:str) { '-' }
 
-      it { is_expected.to eq [[:op, '-']] }
+      it { is_expected.to eq [[:op, :-]] }
     end
 
     context 'with operator "*"' do
       let(:str) { '*' }
 
-      it { is_expected.to eq [[:op, '*']] }
+      it { is_expected.to eq [[:op, :*]] }
     end
 
     context 'with operator "/"' do
       let(:str) { '/' }
 
-      it { is_expected.to eq [[:op, '/']] }
+      it { is_expected.to eq [[:op, :/]] }
     end
 
     context 'with operator "%"' do
       let(:str) { '%' }
 
-      it { is_expected.to eq [[:op, '%']] }
+      it { is_expected.to eq [[:op, :%]] }
+    end
+
+    context 'with empty string' do
+      let(:str) { '' }
+
+      it { is_expected.to eq [] }
     end
 
     context 'with space' do
       let(:str) { ' ' }
 
-      it { is_expected.to eq [[:sp, ' ']] }
+      it { is_expected.to eq [] }
     end
 
     context 'with equation 1' do
       let(:str) { '1 + 1' }
 
-      it { is_expected.to eq [[:int, '1'], [:sp, ' '], [:op, '+'], [:sp, ' '], [:int, '1']] }
+      it { is_expected.to eq [[:int, '1'], [:op, :+], [:int, '1']] }
     end
 
     context 'with equation 1' do
       let(:str) { '30_000_000*.25' }
 
-      it { is_expected.to eq [[:int, '30_000_000'], [:op, '*'], [:float, '.25']] }
+      it { is_expected.to eq [[:int, '30_000_000'], [:op, :*], [:float, '.25']] }
     end
 
     context 'with equation 1' do
       let(:str) { '1 + 1' }
 
-      it { is_expected.to eq [[:int, '1'], [:sp, ' '], [:op, '+'], [:sp, ' '], [:int, '1']] }
+      it { is_expected.to eq [[:int, '1'], [:op, :+], [:int, '1']] }
     end
 
     # Below is not supported
