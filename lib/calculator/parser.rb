@@ -5,13 +5,15 @@ require_relative 'lexer'
 module Calculator
   class Parser
     PRESEDENCE = {
-      :+  => 1,
-      :-  => 1,
-      :*  => 2,
-      :/  => 2,
-      :%  => 2,
-      :+@ => 3,
-      :-@ => 3
+      :'(' => 0,
+      :+   => 1,
+      :-   => 1,
+      :*   => 2,
+      :/   => 2,
+      :%   => 2,
+      :+@  => 3,
+      :-@  => 3,
+      :^   => 4
     }.freeze
 
     def initialize
@@ -21,32 +23,6 @@ module Calculator
     def parse(str)
       @tokens = @lexer.lex(str)
       infix_to_postfix
-    end
-
-    def sexp(str)
-      @tokens = @lexer.lex(str)
-      return nil if infix_to_postfix.nil?
-      return [] if @tokens.empty?
-
-      stack = []
-
-      @tokens.each do |type, value|
-        case type
-        when :int
-          stack << [type, value]
-        when :float
-          stack << [type, value]
-        when :unary
-          r = stack.pop
-          stack << [:unary, value, r]
-        when :binary
-          r = stack.pop
-          l = stack.pop
-          stack << [:binary, value, l, r]
-        end
-      end
-
-      stack.last
     end
 
     private
@@ -59,29 +35,39 @@ module Calculator
       stack = []
       postfix = []
 
-      @tokens.each do |token|
-        case token[0]
+      @tokens.each do |type, value|
+        case type
         when :int
-          token[1] = token[1].to_i
-          postfix << token
+          postfix << [type, value.to_i]
         when :float
-          token[1] = token[1].to_f
-          postfix << token
+          postfix << [type, value.to_f]
         when :op
-          postfix_operator_token(token, last)
-          return nil if PRESEDENCE[token[1]].nil?
+          type, value = postfix_operator_token([type, value], last)
+          return nil if PRESEDENCE[value].nil?
           stack.reverse_each do |op|
-            break if PRESEDENCE[op[1]] < PRESEDENCE[token[1]]
-            break if PRESEDENCE[op[1]] == PRESEDENCE[token[1]] && token[0] == :unary
+            break if PRESEDENCE[op[1]] < PRESEDENCE[value]
+            break if PRESEDENCE[op[1]] == PRESEDENCE[value] && type == :unary
 
             postfix << stack.pop
           end
-          stack << token
+          stack << [type, value]
+        when :bk
+          case value
+          when :'('
+            stack << [type, value]
+          when :')'
+            stack.reverse_each do |op|
+              break if op[1] == :'('
+
+              postfix << stack.pop
+            end
+            stack.pop
+          end
         end
-        last = token[0]
+        last = type
       end
       @tokens = postfix.concat(stack.reverse)
-      @tokens = validate ? @tokens : nil
+      @tokens if operator_validate
     end
 
     def postfix_operator_token(token, last)
@@ -91,9 +77,10 @@ module Calculator
       else
         token[0] = :binary
       end
+      token
     end
 
-    def validate
+    def operator_validate
       counter = 0
       @tokens.each do |type, _|
         case type
@@ -101,6 +88,10 @@ module Calculator
           counter += 1
         when :binary
           counter -= 1
+        when :unary
+          counter
+        else
+          return false
         end
         return false if counter < 1
       end

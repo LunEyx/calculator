@@ -7,7 +7,8 @@ module Calculator
     SAMPLE = {
       float: /(\d+(_?\d+)*)?\.\d+(_?\d+)*/,
       int:   /\d+(_?\d+)*/,
-      op:    %r{[+\-*/%]},
+      op:    %r{[+\-*/%^]},
+      bk:    /[()]/,
       id:    /[a-z][a-zA-Z0-9]*/,
       const: /[A-Z]+/,
       error: /./
@@ -30,7 +31,7 @@ module Calculator
     def scan_token(scanner)
       SAMPLE.each do |type, regex|
         scan_result = scanner.scan(regex)
-        type == :op && scan_result = scan_result&.to_sym
+        %i[op bk].include?(type) && scan_result = scan_result&.to_sym
         return [type, scan_result] unless scan_result.nil?
       end
       nil

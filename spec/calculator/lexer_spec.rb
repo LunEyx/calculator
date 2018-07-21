@@ -74,6 +74,24 @@ RSpec.describe Calculator::Lexer do
       it { is_expected.to eq [[:op, :%]] }
     end
 
+    context 'with operator ^' do
+      let(:str) { '^' }
+
+      it { is_expected.to eq [[:op, '^']] }
+    end
+
+    context 'with operator (' do
+      let(:str) { '(' }
+
+      it { is_expected.to eq [[:bk, '(']] }
+    end
+
+    context 'with operator )' do
+      let(:str) { ')' }
+
+      it { is_expected.to eq [[:bk, ')']] }
+    end
+
     context 'with empty string' do
       let(:str) { '' }
 
@@ -483,28 +501,10 @@ RSpec.describe Calculator::Lexer do
       it { is_expected.to eq [[:error, '$']] }
     end
 
-    context 'with not supported operator ^' do
-      let(:str) { '^' }
-
-      it { is_expected.to eq [[:error, '^']] }
-    end
-
     context 'with not supported operator &' do
       let(:str) { '&' }
 
       it { is_expected.to eq [[:error, '&']] }
-    end
-
-    context 'with not supported operator (' do
-      let(:str) { '(' }
-
-      it { is_expected.to eq [[:error, '(']] }
-    end
-
-    context 'with not supported operator )' do
-      let(:str) { ')' }
-
-      it { is_expected.to eq [[:error, ')']] }
     end
 
     context 'with not supported operator _' do
