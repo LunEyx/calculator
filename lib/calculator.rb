@@ -3,6 +3,6 @@
 require_relative 'calculator_lexer'
 
 module Calculator
-  VERSION = '0.1.0'
+  VERSION = '1.0.0'
 end
 

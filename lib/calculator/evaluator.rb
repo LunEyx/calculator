@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'parser'
+
 module Calculator
   class Evaluator
     attr_reader :result
