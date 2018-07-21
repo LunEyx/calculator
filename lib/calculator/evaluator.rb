@@ -40,7 +40,7 @@ module Calculator
           stack << OPERATION[value].call(l, r)
         end
       end
-      stack.last.is_a?(Float) && stack.last.to_s =~ /\d+\.0/ && stack[-1] = stack.last.to_i
+      stack.last.is_a?(Float) && stack.last.to_s =~ /\d+\.0$/ && stack[-1] = stack.last.to_i
 
       @result = stack.last
     end
